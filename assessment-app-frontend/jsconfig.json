@@ -1,8 +1,11 @@
 {
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "exclude": ["node_modules", "dist"]
-}
+    "compilerOptions": {
+      "target": "ESNext",
+      "module": "ESNext",
+      "baseUrl": ".",
+      "paths": {
+        "@/*": ["src/*"]
+      }
+    },
+    "exclude": ["node_modules", "dist"]
+  }

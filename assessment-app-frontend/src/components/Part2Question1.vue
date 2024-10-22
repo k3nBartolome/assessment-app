@@ -1,13 +1,13 @@
 <template>
-    <div class="flex justify-center items-center min-h-screen bg-gray-100">
-        <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl w-full">
+    <div class="flex items-center justify-center min-h-screen bg-gray-100">
+        <div class="w-full max-w-2xl p-6 bg-white rounded-lg shadow-md">
             <!-- Header with Timer -->
             <header
-                class="bg-blue-300 text-white p-4 text-center font-semibold rounded-t-lg flex justify-between"
+                class="flex justify-between p-4 font-semibold text-center text-white bg-blue-300 rounded-t-lg"
             >
                 <h1>STEP Non-Voice Assessment</h1>
                 <div
-                    class="border border-gray-500 text-black px-2 py-1 rounded"
+                    class="px-2 py-1 text-black border border-gray-500 rounded"
                 >
                     <p>Time remaining</p>
                     <p>{{ formattedTime }}</p>
@@ -25,7 +25,7 @@
                     <span class="text-gray-700">Response:</span>
                     <textarea
                         v-model="answer"
-                        class="form-textarea mt-1 block w-full rounded border border-gray-300 p-2"
+                        class="block w-full p-2 mt-1 border border-gray-300 rounded form-textarea"
                         rows="3"
                         placeholder="Type your response here..."
                         @input="saveAnswer"
@@ -34,13 +34,35 @@
             </section>
 
             <!-- Next Button -->
-            <div class="flex justify-end items-center mt-6">
+            <div class="flex items-center justify-end mt-6">
                 <button
-                    @click="next"
-                    class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+                    @click="showModal = true"
+                    class="px-4 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-600"
                 >
                     Next Page &raquo;
                 </button>
+            </div>
+        </div>
+
+        <!-- Confirmation Modal -->
+        <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+            <div class="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
+                <h2 class="text-xl font-semibold">Confirm Navigation</h2>
+                <p class="mt-4">Are you sure you want to proceed to the next page?</p>
+                <div class="flex justify-end mt-6">
+                    <button
+                        @click="showModal = false"
+                        class="px-4 py-2 mr-2 font-semibold text-white bg-gray-500 rounded hover:bg-gray-600"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        @click="confirmNext"
+                        class="px-4 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-600"
+                    >
+                        Yes, Continue
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -50,51 +72,68 @@
 import { ref, onMounted, computed } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
-import axios from "axios";
+
+const formatTime = (date) => {
+    const d = new Date(date);
+    const hours = d.getHours().toString().padStart(2, "0");
+    const minutes = d.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`; // Ensures HH:MM format
+};
 
 const store = useStore();
 const router = useRouter();
 const answer = ref("");
-const duration = 120; // Set duration to 120 seconds
-const timeRemaining = ref(duration); // Time remaining for the timer
-const interval = ref(null); // Timer interval
-
+const duration = 120; // Total duration in seconds
+const timeRemaining = ref(duration);
+const interval = ref(null);
+const showModal = ref(false);
 const startTime = ref("");
 
-// Computed property to format time in mm:ss
 const formattedTime = computed(() => {
     const minutes = Math.floor(timeRemaining.value / 60);
     const seconds = timeRemaining.value % 60;
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 });
 
+const saveAnswer = () => {
+    store.commit("setQuestion3Answer", answer.value);
+    localStorage.setItem("question3Answer", answer.value);
+};
+
 onMounted(() => {
-    // Load saved answer from local storage if available
     const savedAnswer = localStorage.getItem("question3Answer");
-    answer.value = savedAnswer || ""; // Set the textarea with saved answer if exists
-
-    // Load saved start time from local storage if available
+    answer.value = savedAnswer || "";
     const savedStartTime = localStorage.getItem("question3StartTime");
-    startTime.value = savedStartTime || new Date().toISOString(); // Use saved time or current time
+    startTime.value = savedStartTime || new Date().toISOString();
+    const savedEndTime = localStorage.getItem("question3EndTime");
 
-    // Start the timer countdown
-    interval.value = setInterval(() => {
-        if (timeRemaining.value > 0) {
-            timeRemaining.value--;
-        } else {
-            clearInterval(interval.value);
-            next(); // Move to the next question when time is up
-        }
-    }, 1000);
+    // Check if the end time is set
+    if (savedEndTime) {
+        // If there's an end time, set the time remaining to zero
+        timeRemaining.value = 0;
+    } else {
+        // Start the timer if there is no end time
+        interval.value = setInterval(() => {
+            if (timeRemaining.value > 0) {
+                timeRemaining.value--;
+            } else {
+                clearInterval(interval.value);
+            }
+        }, 1000);
+    }
 });
-const next = () => {
+
+const confirmNext = () => {
+    showModal.value = false;
+    clearInterval(interval.value);
     const endTime = new Date().toISOString();
-    localStorage.setItem("question3StartTime", startTime.value);
-    localStorage.setItem("question3EndTime", endTime);
-    store.commit("setQuestion3StartTime", startTime.value);
-    store.commit("setQuestion3EndTime", endTime);
-    let completedSteps =
-        JSON.parse(localStorage.getItem("completedSteps")) || [];
+    const formattedEndTime = formatTime(endTime);
+    const formattedStartTime = formatTime(startTime.value);
+    store.commit("setQuestion3StartTime", formattedStartTime);
+    store.commit("setQuestion3EndTime", formattedEndTime);
+    localStorage.setItem("question3StartTime", formattedStartTime); // Save formatted time
+    localStorage.setItem("question3EndTime", formattedEndTime); // Save formatted time
+    let completedSteps = JSON.parse(localStorage.getItem("completedSteps")) || [];
     completedSteps.push("/assessment/question3");
     localStorage.setItem("completedSteps", JSON.stringify(completedSteps));
     router.push("/assessment/part3-instruction");

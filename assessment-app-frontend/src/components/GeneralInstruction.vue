@@ -1,16 +1,16 @@
 <template>
-    <div class="flex justify-center items-center min-h-screen bg-gray-100">
-        <div class="bg-white shadow-md rounded-lg p-6 max-w-2xl w-full">
+    <div class="flex items-center justify-center min-h-screen bg-gray-100">
+        <div class="w-full max-w-2xl p-6 bg-white rounded-lg shadow-md">
             <!-- Header -->
             <header
-                class="bg-blue-300 text-white p-4 text-center font-semibold rounded-t-lg"
+                class="p-4 font-semibold text-center text-white bg-blue-300 rounded-t-lg"
             >
                 <h1>STEP Non-Voice Assessment</h1>
             </header>
 
             <!-- Instructions -->
             <section class="p-6">
-                <h2 class="text-orange-600 font-bold text-xl">
+                <h2 class="text-xl font-bold text-orange-600">
                     General Instructions:
                 </h2>
                 <p class="mt-2 text-gray-800">
@@ -45,7 +45,7 @@
             <div class="flex justify-center mt-6">
                 <button
                     @click="startQuiz"
-                    class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded"
+                    class="px-4 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-600"
                 >
                     Start Quiz
                 </button>
@@ -58,7 +58,6 @@
 export default {
     methods: {
         startQuiz() {
-            // Mark this step as completed
             this.markStepCompleted("/assessment/gen-instruction");
             this.$router.push("/assessment/part1-instruction");
         },
