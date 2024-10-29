@@ -11,7 +11,7 @@ import Question4 from '@/components/Part3Question1.vue';
 
 const routes = [
   {
-    path: '/assessment',
+    path: '/',
     component: AssessmentLayout,
     children: [
       { path: '', component: () => import('@/components/RegisterPage.vue') },
@@ -21,10 +21,10 @@ const routes = [
         component: Part1Instruction,
         beforeEnter: (to, from, next) => {
           const completedSteps = JSON.parse(localStorage.getItem('completedSteps')) || [];
-          if (completedSteps.includes('/assessment/gen-instruction')) {
+          if (completedSteps.includes('/gen-instruction')) {
             next();
           } else {
-            next('/assessment/gen-instruction');
+            next('/gen-instruction');
           }
         }
       },
@@ -33,10 +33,10 @@ const routes = [
         component: Question1,
         beforeEnter: (to, from, next) => {
           const completedSteps = JSON.parse(localStorage.getItem('completedSteps')) || [];
-          if (completedSteps.includes('/assessment/part1-instruction')) {
+          if (completedSteps.includes('/part1-instruction')) {
             next();
           } else {
-            next('/assessment/part1-instruction');
+            next('/part1-instruction');
           }
         }
       },
@@ -45,10 +45,10 @@ const routes = [
         component: Question2,
         beforeEnter: (to, from, next) => {
           const completedSteps = JSON.parse(localStorage.getItem('completedSteps')) || [];
-          if (completedSteps.includes('/assessment/question1')) {
+          if (completedSteps.includes('/question1')) {
             next();
           } else {
-            next('/assessment/question1');
+            next('/question1');
           }
         }
       },
@@ -57,10 +57,10 @@ const routes = [
         component: Part2Instruction,
         beforeEnter: (to, from, next) => {
           const completedSteps = JSON.parse(localStorage.getItem('completedSteps')) || [];
-          if (completedSteps.includes('/assessment/question2')) {
+          if (completedSteps.includes('/question2')) {
             next();
           } else {
-            next('/assessment/question2');
+            next('/question2');
           }
         }
       },
@@ -69,10 +69,10 @@ const routes = [
         component: Question3,
         beforeEnter: (to, from, next) => {
           const completedSteps = JSON.parse(localStorage.getItem('completedSteps')) || [];
-          if (completedSteps.includes('/assessment/part2-instruction')) {
+          if (completedSteps.includes('/part2-instruction')) {
             next();
           } else {
-            next('/assessment/part2-instruction');
+            next('/part2-instruction');
           }
         }
       },
@@ -81,10 +81,10 @@ const routes = [
         component: Part3Instruction,
         beforeEnter: (to, from, next) => {
           const completedSteps = JSON.parse(localStorage.getItem('completedSteps')) || [];
-          if (completedSteps.includes('/assessment/question3')) {
+          if (completedSteps.includes('/question3')) {
             next();
           } else {
-            next('/assessment/question3');
+            next('/question3');
           }
         }
       },
@@ -93,10 +93,10 @@ const routes = [
         component: Question4,
         beforeEnter: (to, from, next) => {
           const completedSteps = JSON.parse(localStorage.getItem('completedSteps')) || [];
-          if (completedSteps.includes('/assessment/part3-instruction')) {
+          if (completedSteps.includes('/part3-instruction')) {
             next();
           } else {
-            next('/assessment/part3-instruction');
+            next('/part3-instruction');
           }
         }
       },

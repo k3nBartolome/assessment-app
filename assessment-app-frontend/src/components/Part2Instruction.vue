@@ -48,12 +48,12 @@ export default {
         nextPage() {
             let completedSteps =
                 JSON.parse(localStorage.getItem("completedSteps")) || [];
-            completedSteps.push("/assessment/part2-instruction");
+            completedSteps.push("/part2-instruction");
             localStorage.setItem(
                 "completedSteps",
                 JSON.stringify(completedSteps)
             );
-            this.$router.push("/assessment/question3");
+            this.$router.push("/question3");
         },
     },
 };

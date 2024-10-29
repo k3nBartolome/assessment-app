@@ -132,8 +132,8 @@ const confirmNext = () => {
     store.commit("setQuestion1StartTime", formattedStartTime);
     store.commit("setQuestion1EndTime", formattedEndTime);
     let completedSteps = JSON.parse(localStorage.getItem("completedSteps")) || [];
-    completedSteps.push("/assessment/question1");
+    completedSteps.push("/question1");
     localStorage.setItem("completedSteps", JSON.stringify(completedSteps));
-    router.push("/assessment/question2");
+    router.push("/question2");
 };
 </script>

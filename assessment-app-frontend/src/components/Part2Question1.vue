@@ -131,11 +131,11 @@ const confirmNext = () => {
     const formattedStartTime = formatTime(startTime.value);
     store.commit("setQuestion3StartTime", formattedStartTime);
     store.commit("setQuestion3EndTime", formattedEndTime);
-    localStorage.setItem("question3StartTime", formattedStartTime); // Save formatted time
-    localStorage.setItem("question3EndTime", formattedEndTime); // Save formatted time
+    localStorage.setItem("question3StartTime", formattedStartTime);
+    localStorage.setItem("question3EndTime", formattedEndTime); 
     let completedSteps = JSON.parse(localStorage.getItem("completedSteps")) || [];
-    completedSteps.push("/assessment/question3");
+    completedSteps.push("/question3");
     localStorage.setItem("completedSteps", JSON.stringify(completedSteps));
-    router.push("/assessment/part3-instruction");
+    router.push("/part3-instruction");
 };
 </script>

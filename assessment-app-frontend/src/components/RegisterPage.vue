@@ -78,7 +78,7 @@ const email = ref("");
 const register = async () => {
     try {
         const response = await axios.post(
-            "http://127.0.0.1:8000/api/register",
+            "http://10.109.2.112:8000/api/register",
             {
                 first_name: first_name.value,
                 last_name: last_name.value,
@@ -90,7 +90,7 @@ const register = async () => {
             store.commit("setUserId", response.data.id);
             localStorage.setItem("applicant_token", response.data.token);
             localStorage.setItem("user_id", response.data.id);
-            router.push("/assessment/gen-instruction");
+            router.push("/gen-instruction");
         } else {
             console.error("Unexpected response structure:", response.data);
         }

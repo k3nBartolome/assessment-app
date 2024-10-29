@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class CreateApplicantTable extends Migration
 {
@@ -18,10 +19,11 @@ class CreateApplicantTable extends Migration
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('email')->nullable();
-            $table->string('question1')->nullable();
-            $table->string('question2')->nullable();
-            $table->string('question3')->nullable();
-            $table->string('question4')->nullable();
+            $table->string('question1', 1000)->nullable();
+            $table->string('question2', 1000)->nullable();
+            $table->string('question3', 1000)->nullable();
+            // Temporarily define question4 as text for table creation
+            $table->text('question4')->nullable();
             $table->time('question1_start')->nullable();
             $table->time('question2_start')->nullable();
             $table->time('question3_start')->nullable();
@@ -33,8 +35,10 @@ class CreateApplicantTable extends Migration
             $table->string('token')->nullable();
             $table->timestamps();
         });
-    }
 
+        // Alter question4 column to VARCHAR(8000) using ALTER COLUMN syntax
+        DB::statement("ALTER TABLE applicant ALTER COLUMN question4 VARCHAR(8000) NULL");
+    }
 
     /**
      * Reverse the migrations.

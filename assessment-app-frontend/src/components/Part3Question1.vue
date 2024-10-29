@@ -162,7 +162,7 @@ const submit = async () => {
   try {
     const token = localStorage.getItem("applicant_token");
     await axios.put(
-      `http://127.0.0.1:8000/api/applicants/${applicantId}/assessment`,
+      `http://10.109.2.112:8000/api/applicants/${applicantId}`,
       data,
       {
         headers: {
@@ -175,7 +175,7 @@ const submit = async () => {
     localStorage.clear();
 
     // Redirect to assessment
-    router.push("/assessment");
+    router.push("/");
   } catch (error) {
     console.error(error);
   } finally {

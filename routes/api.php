@@ -17,5 +17,5 @@ use App\Http\Controllers\RegisterController;
 Route::post('/register', [RegisterController::class, 'register']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::put('/applicants/{id}/assessment', [RegisterController::class, 'updateAssessment']);
+    Route::put('/applicants/{id}', [RegisterController::class, 'updateAssessment']);
 });

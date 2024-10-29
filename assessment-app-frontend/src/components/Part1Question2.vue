@@ -143,9 +143,9 @@ const confirmNext = () => {
     localStorage.setItem("question2EndTime", formattedEndTime); // Store formatted end time
     
     let completedSteps = JSON.parse(localStorage.getItem("completedSteps")) || [];
-    completedSteps.push("/assessment/question2");
+    completedSteps.push("/question2");
     localStorage.setItem("completedSteps", JSON.stringify(completedSteps));
-    router.push("/assessment/part2-instruction");
+    router.push("/part2-instruction");
 };
 
 

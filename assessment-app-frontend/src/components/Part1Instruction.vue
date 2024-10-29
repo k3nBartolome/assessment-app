@@ -46,12 +46,12 @@ export default {
         startQuiz() {
             let completedSteps =
                 JSON.parse(localStorage.getItem("completedSteps")) || [];
-            completedSteps.push("/assessment/part1-instruction");
+            completedSteps.push("/part1-instruction");
             localStorage.setItem(
                 "completedSteps",
                 JSON.stringify(completedSteps)
             );
-            this.$router.push("/assessment/question1");
+            this.$router.push("/question1");
         },
     },
 };

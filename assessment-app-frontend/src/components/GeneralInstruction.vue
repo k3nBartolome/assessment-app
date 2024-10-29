@@ -58,8 +58,8 @@
 export default {
     methods: {
         startQuiz() {
-            this.markStepCompleted("/assessment/gen-instruction");
-            this.$router.push("/assessment/part1-instruction");
+            this.markStepCompleted("/gen-instruction");
+            this.$router.push("/part1-instruction");
         },
         markStepCompleted(step) {
             const completedSteps =
