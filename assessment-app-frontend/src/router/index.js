@@ -8,6 +8,7 @@ import Part2Instruction from '@/components/Part2Instruction.vue';
 import Question3 from '@/components/Part2Question1.vue';
 import Part3Instruction from '@/components/Part3Instruction.vue';
 import Question4 from '@/components/Part3Question1.vue';
+import DonePage from '@/components/DonePage.vue';
 
 const routes = [
   {
@@ -16,6 +17,7 @@ const routes = [
     children: [
       { path: '', component: () => import('@/components/RegisterPage.vue') },
       { path: 'gen-instruction', component: GenInstruction },
+      {path: 'done-assessment', component: DonePage },
       {
         path: 'part1-instruction',
         component: Part1Instruction,

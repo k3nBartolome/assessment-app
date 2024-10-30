@@ -1,6 +1,7 @@
+
 <template>
     <div class="flex items-center justify-center min-h-screen bg-gray-100">
-        <div class="w-full max-w-4xl p-6 bg-white rounded-lg shadow-md">
+        <div class="w-full max-w-2xl p-6 bg-white rounded-lg shadow-md">
             <!-- Header with Timer -->
             <header
                 class="flex justify-between p-4 font-semibold text-center text-white bg-blue-300 rounded-t-lg"
@@ -16,14 +17,12 @@
 
             <!-- Question Section -->
             <section class="p-6">
-                <h2 class="text-xl font-bold text-red-600">
-                    Question 1: Self Answering Questions
-                </h2>
                 <p class="mt-4 text-gray-800">
-                    Question: What activities did you and your friend engage in
-                    during your last hangout?
+                    Chat: Hey, Buddy! I seem to have forgotten the way to get to
+                    your place. If I start from our office, how do I reach your
+                    location?
                 </p>
-                <label class="block mt-4">
+               <label class="block mt-4">
                     <span class="text-gray-700">Answer:</span>
                     <textarea
                         v-model="answer"
@@ -52,15 +51,10 @@
         </div>
 
         <!-- Confirmation Modal -->
-        <div
-            v-if="showModal"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-        >
+        <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
             <div class="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
                 <h2 class="text-xl font-semibold">Confirm Navigation</h2>
-                <p class="mt-4">
-                    Are you sure you want to proceed to the next page?
-                </p>
+                <p class="mt-4">Are you sure you want to proceed to the next page?</p>
                 <div class="flex justify-end mt-6">
                     <button
                         @click="showModal = false"

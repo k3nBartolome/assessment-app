@@ -194,6 +194,7 @@ const submit = async () => {
         const token = localStorage.getItem("applicant_token");
         const applicantId = store.getters.getUserId;
 
+        // Send the PUT request to save data
         await axios.put(
             `http://10.109.2.112:8000/api/applicants/${applicantId}`,
             data,
@@ -202,13 +203,15 @@ const submit = async () => {
             }
         );
 
-        // Clear local storage only if the request is successful
-        localStorage.clear();
-        router.push("/");
+        // Log success and clear local storage
+        console.log("Data submitted successfully:", data);
+        localStorage.clear(); // Clear all local storage items
+        router.push("/done-assessment"); // Redirect to the done assessment page
     } catch (error) {
         console.error("Submission error:", error);
-        // Keep local storage intact if there’s an error
+        // No clearing of local storage occurs here in case of an error
     }
 };
+
 
 </script>
