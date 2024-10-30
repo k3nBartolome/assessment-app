@@ -94,55 +94,58 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
-import { useStore } from "vuex";
+import { ref, onMounted, onBeforeUnmount, computed } from "vue";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
-// Formatting function for start and end times
-const formatTime = (date) => {
-    const d = new Date(date);
-    const hours = d.getHours().toString().padStart(2, "0");
-    const minutes = d.getMinutes().toString().padStart(2, "0");
-    return `${hours}:${minutes}`;
-};
-
-// Initialize store and router
-const store = useStore();
-const router = useRouter();
 const reply = ref("");
-const duration = 900; // 15-minute timer
+const duration = 900; // 15 minutes in seconds
 const timeRemaining = ref(duration);
 const interval = ref(null);
 const showConfirmationModal = ref(false);
 
-const startTime = ref("");
-const endTime = ref("");
 const formattedTime = computed(() => {
     const minutes = Math.floor(timeRemaining.value / 60);
     const seconds = timeRemaining.value % 60;
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 });
 
+// Function to start the timer
+const startTimer = () => {
+    const savedStartTime = localStorage.getItem("emailStartTime");
+    const startTime = savedStartTime
+        ? new Date(savedStartTime).getTime()
+        : new Date().getTime();
+    const elapsedTime = Math.floor((new Date().getTime() - startTime) / 1000);
+    timeRemaining.value = Math.max(duration - elapsedTime, 0); // Ensure it doesn't go negative
+};
+
 // Retrieve saved data and start timer
 onMounted(() => {
     const savedReply = localStorage.getItem("emailReply");
     reply.value = savedReply || "";
 
-    const savedStartTime = localStorage.getItem("emailStartTime");
-    startTime.value = savedStartTime || new Date().toISOString();
+    // Check if start time exists; if not, set it
+    if (!localStorage.getItem("emailStartTime")) {
+        localStorage.setItem("emailStartTime", new Date().toISOString());
+    }
+
+    startTimer();
+
+    // Continue the timer
     interval.value = setInterval(() => {
         if (timeRemaining.value > 0) {
             timeRemaining.value--;
+            localStorage.setItem("timeRemaining", timeRemaining.value);
         } else {
             clearInterval(interval.value);
-            submit();
+            submit(); // Auto-submit when time is up
         }
     }, 1000);
-    const savedUserId = localStorage.getItem("user_id");
-    if (savedUserId) {
-        store.commit("setUserId", savedUserId);
-    }
+});
+
+onBeforeUnmount(() => {
+    clearInterval(interval.value);
 });
 
 // Submit function
@@ -171,7 +174,7 @@ const submit = async () => {
         const applicantId = store.getters.getUserId;
 
         await axios.put(
-            `http://10.109.2.112:8000/api/applicants/${applicantId}`,
+            `http://127.0.0.1:8000/api/applicants/${applicantId}`,
             data,
             {
                 headers: { Authorization: `Bearer ${token}` },

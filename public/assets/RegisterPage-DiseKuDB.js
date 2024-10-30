@@ -36,7 +36,7 @@ const w = {
                 l = n(""),
                 c = async () => {
                     try {
-                        const s = await v.post("http://10.109.2.112:8000/api/register", {
+                        const s = await v.post("http://127.0.0.1:8000/api/register", {
                             first_name: r.value,
                             last_name: o.value,
                             email: l.value

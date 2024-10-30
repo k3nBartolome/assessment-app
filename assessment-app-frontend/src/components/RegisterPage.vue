@@ -78,7 +78,7 @@ const email = ref("");
 const register = async () => {
     try {
         const response = await axios.post(
-            "http://10.109.2.112:8000/api/register",
+            "http://127.0.0.1:8000/api/register",
             {
                 first_name: first_name.value,
                 last_name: last_name.value,
