@@ -40,10 +40,10 @@ class RegisterController extends Controller
         }
 
         $validatedData = $request->validate([
-            'question1' => 'required|string',
-            'question2' => 'required|string',
-            'question3' => 'required|string',
-            'question4' => 'required|string',
+            'question1' => 'nullable|string',
+            'question2' => 'nullable|string',
+            'question3' => 'nullable|string',
+            'question4' => 'nullable|string',
             'question1_start' => 'required|date_format:H:i',
             'question2_start' => 'required|date_format:H:i',
             'question3_start' => 'required|date_format:H:i',

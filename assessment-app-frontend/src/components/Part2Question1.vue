@@ -29,6 +29,10 @@
                         rows="3"
                         placeholder="Type your response here..."
                         @input="saveAnswer"
+                        :disabled="savedEndTime"
+                        :class="{
+                            'bg-gray-200 cursor-not-allowed': savedEndTime,
+                        }"
                     ></textarea>
                 </label>
             </section>
@@ -37,7 +41,11 @@
             <div class="flex items-center justify-end mt-6">
                 <button
                     @click="showModal = true"
-                    class="px-4 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-600"
+                    class="px-4 py-2 font-semibold text-white rounded hover:bg-blue-600"
+                    :class="{
+                        'bg-gray-400': savedEndTime,
+                        'bg-blue-500': !savedEndTime,
+                    }"
                 >
                     Next Page &raquo;
                 </button>
@@ -45,10 +53,15 @@
         </div>
 
         <!-- Confirmation Modal -->
-        <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div
+            v-if="showModal"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        >
             <div class="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
                 <h2 class="text-xl font-semibold">Confirm Navigation</h2>
-                <p class="mt-4">Are you sure you want to proceed to the next page?</p>
+                <p class="mt-4">
+                    Are you sure you want to proceed to the next page?
+                </p>
                 <div class="flex justify-end mt-6">
                     <button
                         @click="showModal = false"
@@ -88,6 +101,7 @@ const timeRemaining = ref(duration);
 const interval = ref(null);
 const showModal = ref(false);
 const startTime = ref("");
+const savedEndTime = localStorage.getItem("question3EndTime"); // Check if end time exists
 
 const formattedTime = computed(() => {
     const minutes = Math.floor(timeRemaining.value / 60);
@@ -105,7 +119,6 @@ onMounted(() => {
     answer.value = savedAnswer || "";
     const savedStartTime = localStorage.getItem("question3StartTime");
     startTime.value = savedStartTime || new Date().toISOString();
-    const savedEndTime = localStorage.getItem("question3EndTime");
 
     // Check if the end time is set
     if (savedEndTime) {
@@ -118,6 +131,7 @@ onMounted(() => {
                 timeRemaining.value--;
             } else {
                 clearInterval(interval.value);
+                confirmNext();
             }
         }, 1000);
     }
@@ -132,8 +146,9 @@ const confirmNext = () => {
     store.commit("setQuestion3StartTime", formattedStartTime);
     store.commit("setQuestion3EndTime", formattedEndTime);
     localStorage.setItem("question3StartTime", formattedStartTime);
-    localStorage.setItem("question3EndTime", formattedEndTime); 
-    let completedSteps = JSON.parse(localStorage.getItem("completedSteps")) || [];
+    localStorage.setItem("question3EndTime", formattedEndTime);
+    let completedSteps =
+        JSON.parse(localStorage.getItem("completedSteps")) || [];
     completedSteps.push("/question3");
     localStorage.setItem("completedSteps", JSON.stringify(completedSteps));
     router.push("/part3-instruction");

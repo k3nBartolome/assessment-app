@@ -2,9 +2,13 @@
     <div class="flex items-center justify-center min-h-screen bg-gray-100">
         <div class="w-full max-w-4xl p-6 bg-white rounded-lg shadow-md">
             <!-- Header with Timer -->
-            <header class="flex justify-between p-4 font-semibold text-center text-white bg-blue-300 rounded-t-lg">
+            <header
+                class="flex justify-between p-4 font-semibold text-center text-white bg-blue-300 rounded-t-lg"
+            >
                 <h1>STEP Non-Voice Assessment</h1>
-                <div class="px-2 py-1 text-black border border-gray-500 rounded">
+                <div
+                    class="px-2 py-1 text-black border border-gray-500 rounded"
+                >
                     <p>Time remaining</p>
                     <p>{{ formattedTime }}</p>
                 </div>
@@ -16,12 +20,18 @@
                     Question 1: Self Answering Questions
                 </h2>
                 <p class="mt-4 text-gray-800">
-                    Question: What activities did you and your friend engage in during your last hangout?
+                    Question: What activities did you and your friend engage in
+                    during your last hangout?
                 </p>
                 <label class="block mt-4">
                     <span class="text-gray-700">Answer:</span>
                     <textarea
                         v-model="answer"
+                        :readonly="!!savedEndTime"
+                        :class="{
+                            'bg-gray-200': !!savedEndTime,
+                            'bg-white': !savedEndTime,
+                        }"
                         class="block w-full p-2 mt-1 border border-gray-300 rounded form-textarea"
                         rows="3"
                         placeholder="Type your answer here..."
@@ -42,10 +52,15 @@
         </div>
 
         <!-- Confirmation Modal -->
-        <div v-if="showModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div
+            v-if="showModal"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+        >
             <div class="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
                 <h2 class="text-xl font-semibold">Confirm Navigation</h2>
-                <p class="mt-4">Are you sure you want to proceed to the next page?</p>
+                <p class="mt-4">
+                    Are you sure you want to proceed to the next page?
+                </p>
                 <div class="flex justify-end mt-6">
                     <button
                         @click="showModal = false"
@@ -86,6 +101,7 @@ const interval = ref(null);
 
 const showModal = ref(false);
 const startTime = ref("");
+const savedEndTime = ref(null);
 const formattedTime = computed(() => {
     const minutes = Math.floor(timeRemaining.value / 60);
     const seconds = timeRemaining.value % 60;
@@ -97,10 +113,10 @@ onMounted(() => {
     answer.value = savedAnswer || "";
     const savedStartTime = localStorage.getItem("question1StartTime");
     startTime.value = savedStartTime || new Date().toISOString();
-    const savedEndTime = localStorage.getItem("question1EndTime");
+    savedEndTime.value = localStorage.getItem("question1EndTime");
 
     // Check if the end time is set
-    if (savedEndTime) {
+    if (savedEndTime.value) {
         // If there's an end time, set the time remaining to zero
         timeRemaining.value = 0;
     } else {
@@ -110,6 +126,7 @@ onMounted(() => {
                 timeRemaining.value--;
             } else {
                 clearInterval(interval.value);
+                confirmNext();
             }
         }, 1000);
     }
@@ -131,7 +148,8 @@ const confirmNext = () => {
     localStorage.setItem("question1EndTime", formattedEndTime);
     store.commit("setQuestion1StartTime", formattedStartTime);
     store.commit("setQuestion1EndTime", formattedEndTime);
-    let completedSteps = JSON.parse(localStorage.getItem("completedSteps")) || [];
+    let completedSteps =
+        JSON.parse(localStorage.getItem("completedSteps")) || [];
     completedSteps.push("/question1");
     localStorage.setItem("completedSteps", JSON.stringify(completedSteps));
     router.push("/question2");
