@@ -2,9 +2,13 @@
     <div class="flex items-center justify-center min-h-screen bg-gray-100">
         <div class="w-full max-w-4xl p-6 bg-white rounded-lg shadow-md">
             <!-- Header with Timer -->
-            <header class="flex justify-between p-4 font-semibold text-center text-white bg-blue-300 rounded-t-lg">
+            <header
+                class="flex justify-between p-4 font-semibold text-center text-white bg-blue-300 rounded-t-lg"
+            >
                 <h1>STEP Non-Voice Assessment</h1>
-                <div class="px-2 py-1 text-black border border-gray-500 rounded">
+                <div
+                    class="px-2 py-1 text-black border border-gray-500 rounded"
+                >
                     <p>Time remaining</p>
                     <p>{{ formattedTime }}</p>
                 </div>
@@ -16,7 +20,8 @@
                     Question 1: Self Answering Questions
                 </h2>
                 <p class="mt-4 text-gray-800">
-                    Question: What activities did you and your friend engage in during your last hangout?
+                    Question: What activities did you and your friend engage in
+                    during your last hangout?
                 </p>
                 <label class="block mt-4">
                     <span class="text-gray-700">Answer:</span>
@@ -53,7 +58,9 @@
         >
             <div class="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg">
                 <h2 class="text-xl font-semibold">Confirm Navigation</h2>
-                <p class="mt-4">Are you sure you want to proceed to the next page?</p>
+                <p class="mt-4">
+                    Are you sure you want to proceed to the next page?
+                </p>
                 <div class="flex justify-end mt-6">
                     <button
                         @click="showModal = false"
@@ -106,7 +113,9 @@ onMounted(() => {
     answer.value = savedAnswer || "";
 
     const savedTimeRemaining = localStorage.getItem("question3TimeRemaining");
-    timeRemaining.value = savedTimeRemaining ? parseInt(savedTimeRemaining, 10) : duration;
+    timeRemaining.value = savedTimeRemaining
+        ? parseInt(savedTimeRemaining, 10)
+        : duration;
 
     const savedStartTime = localStorage.getItem("question3StartTime");
     startTime.value = savedStartTime || new Date().toISOString();
@@ -120,7 +129,10 @@ onMounted(() => {
         interval.value = setInterval(() => {
             if (timeRemaining.value > 0) {
                 timeRemaining.value--;
-                localStorage.setItem("question3TimeRemaining", timeRemaining.value);
+                localStorage.setItem(
+                    "question3TimeRemaining",
+                    timeRemaining.value
+                );
             } else {
                 clearInterval(interval.value);
                 confirmNext();
@@ -139,18 +151,19 @@ const confirmNext = () => {
     clearInterval(interval.value);
     const endTime = new Date().toISOString();
     const formattedEndTime = formatTime(endTime);
-    
+
     // Check if start time is already saved, if not, save it
     if (!localStorage.getItem("question3StartTime")) {
         const formattedStartTime = formatTime(startTime.value);
         localStorage.setItem("question3StartTime", formattedStartTime);
         store.commit("setQuestion3StartTime", formattedStartTime);
     }
-    
+
     localStorage.setItem("question3EndTime", formattedEndTime);
     store.commit("setQuestion3EndTime", formattedEndTime);
 
-    let completedSteps = JSON.parse(localStorage.getItem("completedSteps")) || [];
+    let completedSteps =
+        JSON.parse(localStorage.getItem("completedSteps")) || [];
     completedSteps.push("/question3");
     localStorage.setItem("completedSteps", JSON.stringify(completedSteps));
 
@@ -158,5 +171,4 @@ const confirmNext = () => {
     localStorage.removeItem("question3TimeRemaining");
     router.push("/part3-instruction");
 };
-
 </script>

@@ -174,7 +174,7 @@ const submit = async () => {
         const applicantId = store.getters.getUserId;
 
         await axios.put(
-            `http://127.0.0.1:8000/api/applicants/${applicantId}`,
+            `http://10.109.2.112:8000/api/applicants/${applicantId}`,
             data,
             {
                 headers: { Authorization: `Bearer ${token}` },
