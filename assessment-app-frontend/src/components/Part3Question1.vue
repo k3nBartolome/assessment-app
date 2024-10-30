@@ -6,9 +6,7 @@
                 class="flex justify-between p-4 font-semibold text-center text-white bg-blue-300 rounded-t-lg"
             >
                 <h1>STEP Non-Voice Assessment</h1>
-                <div
-                    class="px-2 py-1 text-black border border-gray-500 rounded"
-                >
+                <div class="px-2 py-1 text-black border border-gray-500 rounded">
                     <p>Time remaining</p>
                     <p>{{ formattedTime }}</p>
                 </div>
@@ -56,7 +54,7 @@
             <!-- Submit Button -->
             <div class="flex items-center justify-end mt-6">
                 <button
-                    @click="showConfirmationModal = true"
+                    @click="toggleConfirmationModal"
                     class="px-4 py-2 font-semibold text-white bg-blue-500 rounded hover:bg-blue-600"
                 >
                     Submit
@@ -76,7 +74,7 @@
                 </p>
                 <div class="flex justify-end mt-6">
                     <button
-                        @click="showConfirmationModal = false"
+                        @click="toggleConfirmationModal"
                         class="px-4 py-2 mr-2 font-semibold text-white bg-gray-500 rounded hover:bg-gray-600"
                     >
                         Cancel
@@ -95,53 +93,73 @@
 
 <script setup>
 import { ref, onMounted, onBeforeUnmount, computed } from "vue";
+import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import axios from "axios";
 
+// Function to format date to HH:MM
+const formatTime = (date) => {
+    const d = new Date(date);
+    const hours = d.getHours().toString().padStart(2, "0");
+    const minutes = d.getMinutes().toString().padStart(2, "0");
+    return `${hours}:${minutes}`;
+};
+
+const store = useStore();
+const router = useRouter();
 const reply = ref("");
-const duration = 900; // 15 minutes in seconds
+const duration = 900; // 15-minute timer in seconds
 const timeRemaining = ref(duration);
 const interval = ref(null);
-const showConfirmationModal = ref(false);
+const showConfirmationModal = ref(false); // Define showConfirmationModal as ref
 
+const startTime = ref(""); // Stores the start time
+const endTime = ref(""); // Stores the end time
 const formattedTime = computed(() => {
     const minutes = Math.floor(timeRemaining.value / 60);
     const seconds = timeRemaining.value % 60;
     return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 });
 
-// Function to start the timer
-const startTimer = () => {
-    const savedStartTime = localStorage.getItem("emailStartTime");
-    const startTime = savedStartTime
-        ? new Date(savedStartTime).getTime()
-        : new Date().getTime();
-    const elapsedTime = Math.floor((new Date().getTime() - startTime) / 1000);
-    timeRemaining.value = Math.max(duration - elapsedTime, 0); // Ensure it doesn't go negative
+// Function to toggle the confirmation modal
+const toggleConfirmationModal = () => {
+    showConfirmationModal.value = !showConfirmationModal.value;
 };
 
-// Retrieve saved data and start timer
-onMounted(() => {
+// Initialize the timer
+const initializeTimer = () => {
     const savedReply = localStorage.getItem("emailReply");
     reply.value = savedReply || "";
 
-    // Check if start time exists; if not, set it
-    if (!localStorage.getItem("emailStartTime")) {
-        localStorage.setItem("emailStartTime", new Date().toISOString());
+    const savedStartTime = localStorage.getItem("emailStartTime");
+    if (savedStartTime) {
+        startTime.value = savedStartTime;
+        const elapsedTime = Math.floor((Date.now() - new Date(savedStartTime)) / 1000);
+        timeRemaining.value = Math.max(duration - elapsedTime, 0);
+    } else {
+        startTime.value = new Date().toISOString();
+        localStorage.setItem("emailStartTime", startTime.value);
     }
 
-    startTimer();
+    if (timeRemaining.value > 0) {
+        interval.value = setInterval(() => {
+            if (timeRemaining.value > 0) {
+                timeRemaining.value--;
+            } else {
+                clearInterval(interval.value);
+                submit();
+            }
+        }, 1000);
+    }
+};
 
-    // Continue the timer
-    interval.value = setInterval(() => {
-        if (timeRemaining.value > 0) {
-            timeRemaining.value--;
-            localStorage.setItem("timeRemaining", timeRemaining.value);
-        } else {
-            clearInterval(interval.value);
-            submit(); // Auto-submit when time is up
-        }
-    }, 1000);
+onMounted(() => {
+    initializeTimer();
+
+    const savedUserId = localStorage.getItem("user_id");
+    if (savedUserId) {
+        store.commit("setUserId", savedUserId);
+    }
 });
 
 onBeforeUnmount(() => {
@@ -149,8 +167,11 @@ onBeforeUnmount(() => {
 });
 
 // Submit function
+// Submit function
 const submit = async () => {
-    endTime.value = new Date().toISOString();
+    endTime.value = new Date().toISOString(); // Capture end time on submit
+
+    // Format start and end times to HH:MM
     const formattedStartTime = formatTime(startTime.value);
     const formattedEndTime = formatTime(endTime.value);
 
@@ -181,10 +202,13 @@ const submit = async () => {
             }
         );
 
+        // Clear local storage only if the request is successful
         localStorage.clear();
         router.push("/");
     } catch (error) {
-        console.error(error);
+        console.error("Submission error:", error);
+        // Keep local storage intact if there’s an error
     }
 };
+
 </script>

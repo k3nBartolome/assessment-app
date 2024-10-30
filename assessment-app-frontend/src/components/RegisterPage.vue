@@ -9,6 +9,12 @@
                     Register for STEP Non-Voice Assessment
                 </h1>
             </header>
+
+            <!-- Display error message -->
+            <p v-if="errorMessage" class="mb-4 text-red-500 text-center">
+                {{ errorMessage }}
+            </p>
+
             <div class="flex flex-col space-y-4">
                 <div class="flex items-center space-x-4">
                     <label
@@ -74,8 +80,12 @@ const router = useRouter();
 const first_name = ref("");
 const last_name = ref("");
 const email = ref("");
+const errorMessage = ref(""); // Reactive variable for error messages
 
 const register = async () => {
+    // Clear previous error messages before a new registration attempt
+    errorMessage.value = ""; 
+
     try {
         const response = await axios.post(
             "http://10.109.2.112:8000/api/register",
@@ -95,10 +105,19 @@ const register = async () => {
             console.error("Unexpected response structure:", response.data);
         }
     } catch (error) {
-        console.error(
-            "Registration error:",
-            error.response ? error.response.data : error.message
-        );
+        // Check for validation error in the response
+        if (
+            error.response &&
+            error.response.data &&
+            error.response.data.email &&
+            Array.isArray(error.response.data.email)
+        ) {
+            // Set the first error message for email if it exists
+            errorMessage.value = error.response.data.email[0];
+        } else {
+            errorMessage.value = "Registration failed. Please try again.";
+        }
+        console.error("Registration error:", error.response ? error.response.data : error.message);
     }
 };
 </script>
